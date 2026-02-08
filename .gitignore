@@ -1,0 +1,17 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Data (keep raw/processed out of git)
+data/raw/
+data/processed/
+
+# OS
+.DS_Store
+
+# Logs / models
+*.log
+models/
+artifacts/

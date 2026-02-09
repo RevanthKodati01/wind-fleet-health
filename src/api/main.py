@@ -7,6 +7,7 @@ import pandas as pd
 import joblib
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from functools import lru_cache
 
 PARQUET_DIR = Path("data/processed/scada_parquet")
 RISK_CSV = Path("data/processed/fleet_risk.csv")
@@ -65,6 +66,14 @@ def top_contributors(df_recent: pd.DataFrame, feats: List[str], tmax: pd.Timesta
 @app.get("/health")
 def health():
     return {"status": "ok"}
+@lru_cache(maxsize=16)
+def load_model(farm_id: str):
+    pack = joblib.load(MODEL_DIR / f"isoforest_{farm_id}.joblib")
+    model = pack["model"]
+    feats = list(pack["features"])
+    n_expected = int(getattr(model, "n_features_in_", len(feats)))
+    feats = feats[:n_expected]
+    return model, feats
 
 @app.post("/score")
 def score(req: ScoreRequest):
@@ -113,9 +122,12 @@ def score(req: ScoreRequest):
     tmax = df["timestamp"].max()
     tmin = tmax - pd.Timedelta(hours=req.lookback_hours)
     recent = df[df["timestamp"] >= tmin].copy()
+    
     if recent.empty:
         raise HTTPException(status_code=400, detail="No rows in lookback window.")
-
+    MAX_POINTS = 50_000  # safe + fast
+    if len(recent) > MAX_POINTS:
+        recent = recent.sample(MAX_POINTS, random_state=42).sort_values("timestamp")
     X = align_features(recent, feats).fillna(0.0).to_numpy(dtype=np.float32, copy=False)
     scores = -model.score_samples(X)
     metrics = compute_risk(scores, threshold)
@@ -124,6 +136,7 @@ def score(req: ScoreRequest):
     recent["anomaly_score"] = scores
     recent["alert"] = (recent["anomaly_score"] >= threshold).astype(int)
     alert_times = recent[recent["alert"] == 1][["timestamp", "anomaly_score"]].tail(50)
+    
 
     return {
         "farm_id": req.farm_id,

@@ -35,6 +35,10 @@ assets = sorted(assets, key=lambda x: int(x) if str(x).isdigit() else str(x))
 asset_id = st.sidebar.selectbox("Asset ID", assets)
 
 lookback_days = st.sidebar.slider("Lookback days", 1, 30, 30)
+run = st.sidebar.button("Run Score")
+if not run:
+    st.info("Select inputs and click **Run Score**.")
+    st.stop()
 
 row = fleet[(fleet["farm_id"] == farm_id) & (fleet["asset_id"] == asset_id)].head(1)
 if row.empty:

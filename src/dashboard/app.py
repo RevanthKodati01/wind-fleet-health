@@ -60,10 +60,8 @@ with left:
 with right:
     st.subheader("Risk distribution")
     st.bar_chart(df_f["risk_bucket"].value_counts())
-
-    st.subheader("Top risky assets")
-    top = df_f.sort_values("risk_score", ascending=False).head(10)[["farm_id","asset_id","risk_score","alert_rate"]]
-    st.table(top)
+st.subheader("Top risky assets")
+top = df_f.sort_values("risk_score", ascending=False).head(10)[["farm_id","asset_id","risk_score","alert_rate"]]
+st.dataframe(top, use_container_width=True, height=320)
 
 st.divider()
-st.info("Next: add Asset Drilldown page (score trend + top contributing sensors).")

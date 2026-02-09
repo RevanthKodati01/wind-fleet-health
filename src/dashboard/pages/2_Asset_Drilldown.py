@@ -77,4 +77,4 @@ else:
     st.dataframe(top, use_container_width=True, height=380)
 
 st.divider()
-st.info("Tip: Keep the API running in another terminal: uvicorn src.api.main:app --reload --port 8000")
+#st.info("Tip: Keep the API running in another terminal: uvicorn src.api.main:app --reload --port 8000")

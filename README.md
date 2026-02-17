@@ -17,6 +17,7 @@ The platform detects early anomalies at **asset and fleet level**, exposes a **m
 * 🖥️ **Streamlit dashboard** (frontend → backend → model)
 * 📦 Efficient **Parquet-based data pipeline** for large SCADA datasets
 
+
 ---
 
 ## 🧠 Problem Statement
@@ -35,6 +36,7 @@ This project builds a **scalable ML system** that:
 * Detects abnormal operating patterns early
 * Prioritizes risky assets across a fleet
 * Provides **explainable signals** for engineers
+
 
 ---
 

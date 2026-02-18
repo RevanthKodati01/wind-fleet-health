@@ -108,6 +108,7 @@ def score(req: ScoreRequest):
             raise HTTPException(status_code=404, detail="asset_id not found in fleet_risk.csv for this farm")
         parquet_file = match["parquet_file"].iloc[0]
 
+
     path = PARQUET_DIR / parquet_file
     if not path.exists():
         raise HTTPException(status_code=404, detail=f"Parquet not found: {path}")

@@ -153,3 +153,4 @@ def score(req: ScoreRequest):
         ],
         "top_contributors": top_contributors(recent, feats, tmax),
     }
+
